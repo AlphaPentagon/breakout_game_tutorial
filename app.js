@@ -18,6 +18,26 @@ let paddleX = (canvas.width - paddleWidth) / 2; // starting position of the padd
 let rightPressed = false;
 let leftPressed = false;
 
+// bricks object
+const bricksObj = {
+  brickRowCount: 3,
+  brickColumnCount: 5,
+  brickWidth: 75,
+  brickHeight: 20,
+  brickPadding: 10,
+  brickOffsetTop: 30,
+  brickOffsetLeft: 30,
+};
+
+// bricks array
+const bricksArr = [];
+for (let col = 0; col < bricksObj.brickColumnCount; col++) {
+  bricksArr[col] = [];
+  for (let row = 0; row < bricksObj.brickRowCount; row++) {
+    bricksArr[col][row] = { x: 0, y: 0 };
+  }
+}
+
 const randomNumber = () => {
   return Math.floor(Math.random() * 256);
 };
@@ -40,8 +60,28 @@ const drawPaddle = () => {
   ctx.closePath();
 };
 
+const drawBricks = () => {
+  for (let col = 0; col < bricksObj.brickColumnCount; col++) {
+    for (let row = 0; row < bricksObj.brickRowCount; row++) {
+      const brickX =
+        col * (bricksObj.brickWidth + bricksObj.brickPadding) +
+        bricksObj.brickOffsetLeft;
+      const brickY =
+        row * (bricksObj.brickHeight + bricksObj.brickPadding) +
+        bricksObj.brickOffsetTop;
+      bricksArr[col][row].x = brickX;
+      bricksArr[col][row].y = brickY;
+      ctx.beginPath();
+      ctx.rect(brickX, brickY, bricksObj.brickWidth, bricksObj.brickHeight);
+      ctx.fill();
+      ctx.closePath();
+    }
+  }
+};
+
 const draw = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawBricks();
   drawBall();
   drawPaddle();
   x += dx;
