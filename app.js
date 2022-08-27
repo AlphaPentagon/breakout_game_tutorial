@@ -29,6 +29,10 @@ const bricksObj = {
   brickOffsetLeft: 30,
 };
 
+let score = 0;
+let bricksDestroyed = 0;
+let totalBricks = bricksObj.brickRowCount * bricksObj.brickColumnCount;
+
 // bricks array
 const bricksArr = [];
 for (let col = 0; col < bricksObj.brickColumnCount; col++) {
@@ -86,6 +90,7 @@ const draw = () => {
   drawBricks();
   drawBall();
   drawPaddle();
+  drawScore();
   collisionDetection();
   x += dx;
   y += dy;
@@ -138,7 +143,7 @@ const keyUpHandler = (e) => {
   }
 };
 
-function collisionDetection() {
+const collisionDetection = () => {
   for (let col = 0; col < bricksObj.brickColumnCount; col++) {
     for (let row = 0; row < bricksObj.brickRowCount; row++) {
       const b = bricksArr[col][row];
@@ -152,11 +157,31 @@ function collisionDetection() {
           dy = -dy;
           randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
           b.status = 0;
+          bricksDestroyed++;
+          if (bricksDestroyed <= 5) {
+            score += 1;
+          } else if (bricksDestroyed > 5 && bricksDestroyed <= 10) {
+            score += 2;
+          } else {
+            score += 3;
+          }
+
+          if (bricksDestroyed === totalBricks) {
+            alert(`YOU WIN, CONGRATULATIONS! YOU SCORED ${score} POINTS!`);
+            document.location.reload();
+            clearInterval(interval); // Needed for Chrome to end game
+          }
         }
       }
     }
   }
-}
+};
+
+const drawScore = () => {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText(`Score: ${score}`, 8, 20);
+};
 
 // listening for key presses and releases
 
