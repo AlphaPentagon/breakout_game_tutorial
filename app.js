@@ -34,7 +34,7 @@ const bricksArr = [];
 for (let col = 0; col < bricksObj.brickColumnCount; col++) {
   bricksArr[col] = [];
   for (let row = 0; row < bricksObj.brickRowCount; row++) {
-    bricksArr[col][row] = { x: 0, y: 0 };
+    bricksArr[col][row] = { x: 0, y: 0, status: 1 };
   }
 }
 
@@ -63,18 +63,20 @@ const drawPaddle = () => {
 const drawBricks = () => {
   for (let col = 0; col < bricksObj.brickColumnCount; col++) {
     for (let row = 0; row < bricksObj.brickRowCount; row++) {
-      const brickX =
-        col * (bricksObj.brickWidth + bricksObj.brickPadding) +
-        bricksObj.brickOffsetLeft;
-      const brickY =
-        row * (bricksObj.brickHeight + bricksObj.brickPadding) +
-        bricksObj.brickOffsetTop;
-      bricksArr[col][row].x = brickX;
-      bricksArr[col][row].y = brickY;
-      ctx.beginPath();
-      ctx.rect(brickX, brickY, bricksObj.brickWidth, bricksObj.brickHeight);
-      ctx.fill();
-      ctx.closePath();
+      if (bricksArr[col][row].status === 1) {
+        const brickX =
+          col * (bricksObj.brickWidth + bricksObj.brickPadding) +
+          bricksObj.brickOffsetLeft;
+        const brickY =
+          row * (bricksObj.brickHeight + bricksObj.brickPadding) +
+          bricksObj.brickOffsetTop;
+        bricksArr[col][row].x = brickX;
+        bricksArr[col][row].y = brickY;
+        ctx.beginPath();
+        ctx.rect(brickX, brickY, bricksObj.brickWidth, bricksObj.brickHeight);
+        ctx.fill();
+        ctx.closePath();
+      }
     }
   }
 };
@@ -84,6 +86,7 @@ const draw = () => {
   drawBricks();
   drawBall();
   drawPaddle();
+  collisionDetection();
   x += dx;
   y += dy;
 
@@ -99,6 +102,7 @@ const draw = () => {
     dy = -dy;
   } else if (y + dy > canvas.height - ballRadius) {
     if (x > paddleX && x < paddleX + paddleWidth) {
+      randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
       if (dy > 0) {
         dy = -dy - 0.3;
       } else {
@@ -133,6 +137,26 @@ const keyUpHandler = (e) => {
     leftPressed = false;
   }
 };
+
+function collisionDetection() {
+  for (let col = 0; col < bricksObj.brickColumnCount; col++) {
+    for (let row = 0; row < bricksObj.brickRowCount; row++) {
+      const b = bricksArr[col][row];
+      if (b.status === 1) {
+        if (
+          x > b.x &&
+          x < b.x + bricksObj.brickWidth &&
+          y > b.y &&
+          y < b.y + bricksObj.brickHeight
+        ) {
+          dy = -dy;
+          randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
+          b.status = 0;
+        }
+      }
+    }
+  }
+}
 
 // listening for key presses and releases
 
