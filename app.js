@@ -54,9 +54,21 @@ const draw = () => {
     dx = -dx;
   }
 
-  if (y + dy > canvas.height - ballRadius || y + dy < ballRadius) {
+  if (y + dy < ballRadius) {
     randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
     dy = -dy;
+  } else if (y + dy > canvas.height - ballRadius) {
+    if (x > paddleX && x < paddleX + paddleWidth) {
+      if (dy > 0) {
+        dy = -dy - 0.3;
+      } else {
+        dy = -dy + 0.3;
+      }
+    } else {
+      alert("GAME OVER");
+      document.location.reload();
+      clearInterval(interval); // Needed for Chrome to end the game
+    }
   }
 
   if (rightPressed) {
@@ -87,4 +99,4 @@ const keyUpHandler = (e) => {
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-setInterval(draw, 10);
+const interval = setInterval(draw, 10);
