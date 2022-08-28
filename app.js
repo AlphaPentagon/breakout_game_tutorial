@@ -7,8 +7,11 @@ let y = canvas.height - 30;
 const ballRadius = 10;
 
 // ball speed/direction
-let dx = 2;
-let dy = -2;
+let defaultSpeed = 3;
+let defaultAngle = Math.floor(Math.random() * 7 - 3);
+let speedIncrease = 0.5;
+let dx = defaultAngle;
+let dy = -defaultSpeed;
 
 const paddleHeight = 10;
 const paddleWidth = 75;
@@ -111,9 +114,9 @@ const draw = () => {
     if (x > paddleX && x < paddleX + paddleWidth) {
       randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
       if (dy > 0) {
-        dy = -dy - 0.3;
+        dy = -dy - speedIncrease;
       } else {
-        dy = -dy + 0.3;
+        dy = -dy + speedIncrease;
       }
     } else {
       playerLives--;
@@ -125,22 +128,21 @@ const draw = () => {
       if (!playerLives) {
         alert(`GAME OVER. YOU SCORED ${score} POINTS. BETTER LUCK NEXT TIME.`);
         document.location.reload();
-        clearInterval(interval); // Needed for Chrome to end the game
       } else {
         x = canvas.width / 2;
         y = canvas.height - 30;
-        dx = 2;
-        dy = -2;
+        dx = defaultAngle;
+        dy = -defaultSpeed;
         paddleX = canvas.width - paddleWidth / 2;
       }
     }
   }
-
   if (rightPressed) {
     paddleX = Math.min(paddleX + paddleSpeed, canvas.width - paddleWidth);
   } else if (leftPressed) {
     paddleX = Math.max(paddleX - paddleSpeed, 0);
   }
+  requestAnimationFrame(draw);
 };
 
 const keyDownHandler = (e) => {
@@ -191,11 +193,9 @@ const collisionDetection = () => {
           } else {
             score += 3;
           }
-
           if (bricksDestroyed === totalBricks) {
             alert(`YOU WIN, CONGRATULATIONS! YOU SCORED ${score} POINTS!`);
             document.location.reload();
-            clearInterval(interval); // Needed for Chrome to end game
           }
         }
       }
@@ -221,4 +221,4 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 document.addEventListener("mousemove", mouseMoveHandler, false);
 
-const interval = setInterval(draw, 10);
+draw();
