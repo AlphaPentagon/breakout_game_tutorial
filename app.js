@@ -143,6 +143,16 @@ const keyUpHandler = (e) => {
   }
 };
 
+const mouseMoveHandler = (e) => {
+  const relativeX = e.clientX - canvas.offsetLeft;
+  if (
+    relativeX > 0 + paddleWidth / 2 &&
+    relativeX < canvas.width - paddleWidth / 2
+  ) {
+    paddleX = relativeX - paddleWidth / 2;
+  }
+};
+
 const collisionDetection = () => {
   for (let col = 0; col < bricksObj.brickColumnCount; col++) {
     for (let row = 0; row < bricksObj.brickRowCount; row++) {
@@ -187,5 +197,6 @@ const drawScore = () => {
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 const interval = setInterval(draw, 10);
