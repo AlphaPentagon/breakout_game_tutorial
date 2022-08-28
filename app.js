@@ -30,6 +30,7 @@ const bricksObj = {
 };
 
 let score = 0;
+let playerLives = 3;
 let bricksDestroyed = 0;
 let totalBricks = bricksObj.brickRowCount * bricksObj.brickColumnCount;
 
@@ -91,6 +92,7 @@ const draw = () => {
   drawBall();
   drawPaddle();
   drawScore();
+  drawLives();
   collisionDetection();
   x += dx;
   y += dy;
@@ -114,9 +116,23 @@ const draw = () => {
         dy = -dy + 0.3;
       }
     } else {
-      alert("GAME OVER");
-      document.location.reload();
-      clearInterval(interval); // Needed for Chrome to end the game
+      playerLives--;
+      if (score - 10 > 0) {
+        score -= 10;
+      } else {
+        score = 0;
+      }
+      if (!playerLives) {
+        alert(`GAME OVER. YOU SCORED ${score} POINTS. BETTER LUCK NEXT TIME.`);
+        document.location.reload();
+        clearInterval(interval); // Needed for Chrome to end the game
+      } else {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        dx = 2;
+        dy = -2;
+        paddleX = canvas.width - paddleWidth / 2;
+      }
     }
   }
 
@@ -191,6 +207,12 @@ const drawScore = () => {
   ctx.font = "16px Arial";
   ctx.fillStyle = "#0095DD";
   ctx.fillText(`Score: ${score}`, 8, 20);
+};
+
+const drawLives = () => {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText(`Lives: ${playerLives}`, canvas.width - 65, 20);
 };
 
 // listening for key presses and releases
