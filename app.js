@@ -1,6 +1,27 @@
 const canvas = document.querySelector("#myCanvas");
 const ctx = canvas.getContext("2d");
 
+function sound(src) {
+  this.sound = document.createElement("audio");
+  this.sound.src = src;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  this.play = function () {
+    this.sound.play();
+  };
+  this.stop = function () {
+    this.sound.pause();
+  };
+}
+
+const ballHit = new sound("/sounds/ballHit.wav");
+const losePoint = new sound("/sounds/losePoint.wav");
+const gameOver = new sound("/sounds/gameOver.wav");
+const gameWin = new sound("/sounds/gameWin.wav");
+const bgMusic = new sound("/sounds/bgMusic.mp3");
+
 let x = canvas.width / 2;
 let y = canvas.height - 30;
 
@@ -90,6 +111,7 @@ const drawBricks = () => {
 };
 
 const draw = () => {
+  bgMusic.play();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBricks();
   drawBall();
@@ -104,15 +126,18 @@ const draw = () => {
 
   if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
     randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
+    ballHit.play();
     dx = -dx;
   }
 
   if (y + dy < ballRadius) {
     randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
+    ballHit.play();
     dy = -dy;
   } else if (y + dy > canvas.height - ballRadius) {
     if (x > paddleX && x < paddleX + paddleWidth) {
       randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
+      ballHit.play();
       if (dy > 0) {
         dy = -dy - speedIncrease;
       } else {
@@ -120,12 +145,15 @@ const draw = () => {
       }
     } else {
       playerLives--;
+      losePoint.play();
       if (score - 10 > 0) {
         score -= 10;
       } else {
         score = 0;
       }
       if (!playerLives) {
+        bgMusic.stop();
+        gameOver.play();
         alert(`GAME OVER. YOU SCORED ${score} POINTS. BETTER LUCK NEXT TIME.`);
         document.location.reload();
       } else {
@@ -184,8 +212,11 @@ const collisionDetection = () => {
         ) {
           dy = -dy;
           randomColour = `rgb(${randomNumber()}, ${randomNumber()}, ${randomNumber()})`;
+          ballHit.play();
           b.status = 0;
           bricksDestroyed++;
+          totalBricks--;
+          console.log(totalBricks);
           if (bricksDestroyed <= 5) {
             score += 1;
           } else if (bricksDestroyed > 5 && bricksDestroyed <= 10) {
@@ -193,7 +224,9 @@ const collisionDetection = () => {
           } else {
             score += 3;
           }
-          if (bricksDestroyed === totalBricks) {
+          if (!totalBricks) {
+            bgMusic.stop();
+            gameWin.play();
             alert(`YOU WIN, CONGRATULATIONS! YOU SCORED ${score} POINTS!`);
             document.location.reload();
           }
