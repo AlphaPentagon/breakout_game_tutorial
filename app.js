@@ -16,11 +16,11 @@ function sound(src) {
   };
 }
 
-const ballHit = new sound("/sounds/ballHit.wav");
-const losePoint = new sound("/sounds/losePoint.wav");
-const gameOver = new sound("/sounds/gameOver.wav");
-const gameWin = new sound("/sounds/gameWin.wav");
-const bgMusic = new sound("/sounds/bgMusic.mp3");
+const ballHit = new sound("/public/sounds/ballHit.wav");
+const losePoint = new sound("/public/sounds/losePoint.wav");
+const gameOver = new sound("/public/sounds/gameOver.wav");
+const gameWin = new sound("/public/sounds/gameWin.wav");
+const bgMusic = new sound("/public/sounds/bgMusic.mp3");
 
 let x = canvas.width / 2;
 let y = canvas.height - 30;
